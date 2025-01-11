@@ -1,0 +1,44 @@
+@model FinancialAppMvc.Models.Transaction
+@{
+    ViewBag.Title = "Edit Transaction";
+}
+
+<h1>Edit Transaction</h1>
+
+@* ValidationSummary show errors in associated fields *@
+<div>
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+</div>
+
+<form asp-action="Update" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description</label>
+        <input type="text" class="form-control" asp-for="Description" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="Amount" class="form-label">Amount</label>
+        <input type="number" class="form-control" asp-for="Amount" step="0.01" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="Date" class="form-label">Date</label>
+        <input type="date" class="form-control" asp-for="Date" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="Type" class="form-label">Type</label>
+        <select class="form-control" asp-for="Type">
+            <option value="1">Income</option>
+            <option value="2">Expense</option>
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="Category" class="form-label">Category</label>
+        <input type="text" class="form-control" asp-for="Category" />
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary mt-3" type="submit">Save</button>
+</form>

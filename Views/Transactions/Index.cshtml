@@ -1,0 +1,38 @@
+@model IEnumerable<FinancialAppMvc.Models.Transaction>
+@{
+    ViewBag.Title = "Transações";
+}
+
+<h1>Transações</h1>
+<p>Saldo Total: <strong>@ViewBag.Balance.ToString("C")</strong></p>
+<a asp-action="Create">Create</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model)
+        {
+            <tr>
+                <td>@transaction.Description</td>
+                <td>@transaction.Amount.ToString("C")</td>
+                <td>@transaction.Date.ToShortDateString()</td>
+                <td>@transaction.Type</td>
+                <td>
+                    <a asp-action="Edit" class="btn btn-primary" asp-route-id="@transaction.Id">Editar</a> |
+                    <form asp-action="Destroy" asp-route-id="@transaction.Id" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir esta transação?');">
+                            Excluir
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

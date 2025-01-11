@@ -1,0 +1,30 @@
+@{
+    ViewBag.Title = "Register";
+}
+
+<h1>Registrar-se</h1>
+
+@* ValidationSummary show errors in associated fields *@
+<div>
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+</div>
+
+<form asp-action="Register" method="post">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" name="username" required />
+        @Html.ValidationMessage("username", "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" name="email" required />
+        @Html.ValidationMessage("email", "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" name="password" required />
+        @Html.ValidationMessage("password", "", new { @class = "text-danger" })
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Register</button>
+</form>
+<a asp-action="Login">Already have an account? Log in</a>
