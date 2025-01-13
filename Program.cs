@@ -1,7 +1,6 @@
 using FinancialAppMvc.Actions;
 using FinancialAppMvc.Contracts;
 using FinancialAppMvc.Factories;
-using FinancialAppMvc.Logging;
 using FinancialAppMvc.Middlewares;
 using FinancialAppMvc.Repositories;
 using FinancialAppMvc.Services;
@@ -10,6 +9,7 @@ using Hangfire.MemoryStorage;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +50,10 @@ builder.Services.AddScoped<IUserContextService, UserContextService>();
 // register MediatR to event listener
 builder.Services.AddMediatR(typeof(Program).Assembly);
 
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MonitoringBehavior<,>));
+// configure logs
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 // Add config authentication routes
 builder.Services.ConfigureApplicationCookie(options =>
@@ -58,6 +61,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
 });
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
 
 var app = builder.Build();
 

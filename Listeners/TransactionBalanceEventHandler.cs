@@ -1,4 +1,3 @@
-using FinancialAppMvc.Enums;
 using FinancialAppMvc.Events;
 using FinancialAppMvc.Factories;
 using FinancialAppMvc.Models;
@@ -12,12 +11,15 @@ namespace FinancialAppMvc.Listeners
         private readonly UserRepository _userRepository;
         private readonly AuditLogRepository _auditLog;
         private readonly BalanceStrategyFactory _balanceStrategyFactory;
+        private readonly ILogger<TransactionBalanceEventHandler> _logger;
 
-        public TransactionBalanceEventHandler(UserRepository userRepository, AuditLogRepository auditLog, BalanceStrategyFactory balanceStrategyFactory)
+
+        public TransactionBalanceEventHandler(UserRepository userRepository, AuditLogRepository auditLog, BalanceStrategyFactory balanceStrategyFactory, ILogger<TransactionBalanceEventHandler> logger)
         {
             _userRepository = userRepository;
             _auditLog = auditLog;
             _balanceStrategyFactory = balanceStrategyFactory;
+            _logger = logger;
         }
 
         public async Task Handle(TransactionBalanceEvent notification, CancellationToken cancellationToken)
@@ -29,6 +31,8 @@ namespace FinancialAppMvc.Listeners
                 balance = new Balance { UserId = notification.Transaction.UserId, CurrentBalance = 0 };
                 await _userRepository.AddBalanceUserAsync(balance);
             }
+
+            _logger.LogInformation("Event balance type: {EventBalanceType}, Transaction type: {TransactionType}", notification.EventBalanceType, notification.Transaction.Type);
 
             var previousBalance = balance.CurrentBalance;
 
