@@ -13,7 +13,6 @@ namespace FinancialAppMvc.Listeners
         private readonly BalanceStrategyFactory _balanceStrategyFactory;
         private readonly ILogger<TransactionBalanceEventHandler> _logger;
 
-
         public TransactionBalanceEventHandler(UserRepository userRepository, AuditLogRepository auditLog, BalanceStrategyFactory balanceStrategyFactory, ILogger<TransactionBalanceEventHandler> logger)
         {
             _userRepository = userRepository;
