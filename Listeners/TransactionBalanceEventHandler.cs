@@ -24,7 +24,7 @@ namespace FinancialAppMvc.Listeners
 
         public async Task Handle(TransactionBalanceEvent notification, CancellationToken cancellationToken)
         {
-            var balance = await _userRepository.GetBalanceUserAsync();
+            var balance = await _userRepository.GetBalanceUserAsync(notification.Transaction.UserId);
 
             if (balance == null)
             {
@@ -46,7 +46,8 @@ namespace FinancialAppMvc.Listeners
                 UserId = notification.Transaction.UserId,
                 PreviousBalance = previousBalance,
                 AmountChanged = notification.Transaction.Amount,
-                NewBalance = balance.CurrentBalance
+                NewBalance = balance.CurrentBalance,
+                TransactionId = notification.Transaction.Id
             });
         }
     }

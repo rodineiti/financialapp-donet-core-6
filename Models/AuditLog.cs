@@ -8,4 +8,5 @@ public class AuditLog
     public decimal AmountChanged { get; set; }
     public decimal NewBalance { get; set; }
     public DateTime Date { get; set; }
+    public int? TransactionId { get; set; }
 }

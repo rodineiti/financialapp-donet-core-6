@@ -2,89 +2,89 @@ using FinancialAppMvc.Contracts;
 using FinancialAppMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using FinancialAppMvc.Models;
-using MediatR;
-using FinancialAppMvc.Events;
-using FinancialAppMvc.Enums;
 
 namespace FinancialAppMvc.Repositories
 {
     public class TransactionRepository : ITransactionRepository
     {
         private readonly AppDbContext _context;
-        private readonly IUserContextService _userContextService;
-        private readonly UserRepository _userRepository;
-        private readonly IMediator _mediator;
-
-
-        public TransactionRepository(AppDbContext context, IUserContextService userContextService, UserRepository userRepository, IMediator mediator)
+        
+        public TransactionRepository(AppDbContext context)
         {
             _context = context;
-            _userContextService = userContextService;
-            _userRepository = userRepository;
-            _mediator = mediator;
         }
 
-        public async Task<IEnumerable<Transaction>> GetAllAsync()
+        public async Task<IEnumerable<Transaction>> GetAllAsync(string userId)
         {
-            var userId = _userContextService.GetUserId();
-
-            return await _context.Transactions
-                .Where(t => t.UserId == userId)
-                .OrderByDescending(t => t.Date)
-                .ToListAsync();
+            try 
+            {
+                return await _context.Transactions
+                    .Where(t => t.UserId == userId)
+                    .OrderByDescending(t => t.Date)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public async Task<Transaction?> GetByIdAsync(int id)
+        public async Task<Transaction?> GetByIdAsync(int id, string userId)
         {
-            var userId = _userContextService.GetUserId();
-            
-            return await _context.Transactions
-                .Where(t => t.UserId == userId && t.Id == id)
-                .FirstOrDefaultAsync();
+            try 
+            {
+                return await _context.Transactions
+                    .Where(t => t.UserId == userId && t.Id == id)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task StoreAsync(Transaction transaction)
         {
-            var userId = _userContextService.GetUserId();
+            try 
+            {
+                _context.Transactions.Add(transaction);
 
-            transaction.UserId = userId;
-
-            _context.Transactions.Add(transaction);
-
-            await _mediator.Publish(new TransactionBalanceEvent(transaction, EventBalanceType.Create));
-
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task UpdateAsync(Transaction transaction)
         {
-            var userId = _userContextService.GetUserId();
+            try 
+            {
+                _context.Transactions.Update(transaction);
 
-            transaction.UserId = userId;
-
-            _context.Transactions.Update(transaction);
-
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public async Task<bool> DestroyAsync(int id)
+        public async Task<bool> DestroyAsync(Transaction transaction)
         {
-            var userId = _userContextService.GetUserId();
-
-            var transaction = await GetByIdAsync(id);
-
-            if (transaction != null)
+            try 
             {
-                await _mediator.Publish(new TransactionBalanceEvent(transaction, EventBalanceType.Delete));
-
                 _context.Transactions.Remove(transaction);
-                
+            
                 await _context.SaveChangesAsync();
 
                 return true;
             }
-
-            return false;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
